@@ -1,0 +1,91 @@
+Input - 16 bits
+break it down into left(L) and right(R) 8 bits using AND mask
+F(R,K) = R XOR NOT K
+Iteration1 result = L XOR F(R,K)
+left shift rotation for K
+	
+
+AND mask to separate left and right
+XOR - (a and not b) or (not a and b)
+rotation - AND mask of 10->, jump if not equals 0, increment a var to 1
+	   add key to itself and then add the increment var.
+swaps - use temp memory address
+
+
+CIPHER FILE -
+key in RAM[1], text in RAM[2], encryptedtext in RAM[0]
+break RAM[2] into left and right
+RAM[3] <- key copy
+RAM[4] <- right_mask
+RAM[5] <- left_mask
+
+REPEAT
+RAM[6] <- right
+RAM[7] <- left
+RAM[8] <- RAM[6] XOR not RAM[3]
+RAM[7] <- RAM[7] XOR RAM[8]
+
+RAM[3] <- Rotate key
+RAM[9] <- RAM[7]
+RAM[7] <- RAM[6]
+RAM[6] <- RAM[9]
+
+REPEAT 4 TIMES
+
+
+
+ROTATION FILE -
+inputs in RAM[3], number of rotations in RAM[4], output in RAM[5]
+
+loop using counter ->RAM[7], until RAM[4] - RAM[7] = 0
+AND mask
+
+XOR FILE -
+xor between 2 16 bit inputs stored in RAM[3] and RAM[4]
+results in ram[5]
+(a AND NOT b) OR (NOT a AND b)
+
+ram[6] <- not ram[3]
+ram[7] <- not ram[4]
+ram[8] <- ram[3] and ram[7]
+ram[9] <- ram[6] and ram[4]
+ram[5] <- ram[8] or ram[9]
+
+
+
+    @R3
+    D=M
+    @R6
+    M=!D
+
+    @R4
+    D=M
+    @R7
+    M=!D
+
+    @R3
+    D=M
+    @R7
+    D=M&D
+    @R8
+    M=D
+
+    @R4
+    D=M
+    @R6
+    D=M&D
+    @R9
+    M=D
+
+    @R8
+    D=M
+    @R9
+    D=M|D
+    @R5
+    M=D
+(END)
+    @END
+    0;JMP
+
+
+
