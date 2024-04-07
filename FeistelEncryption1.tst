@@ -4,7 +4,7 @@
 // File name: projects/04/mult/Mult.tst
 
 load FeistelEncryption.asm,
-output-file FeistelEncrytion1.out,
+output-file FeistelEncryption1.out,
 compare-to FeistelEncryption1.cmp,
 output-list RAM[0]%D2.6.2;
 

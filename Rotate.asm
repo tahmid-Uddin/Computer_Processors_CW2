@@ -1,8 +1,6 @@
 // Sets RAM[6] 0 - represents leading 1 counter
-    @0
-    D=A
     @R6
-    M=D
+    M=0
 
 // Mask (1[15]0) = RAM[7]
     @32767

@@ -3,7 +3,9 @@ break it down into left(L) and right(R) 8 bits using AND mask
 F(R,K) = R XOR NOT K
 Iteration1 result = L XOR F(R,K)
 left shift rotation for K
-	
+
+0000000011001000
+1000110111110010
 
 AND mask to separate left and right
 XOR - (a and not b) or (not a and b)
@@ -15,22 +17,46 @@ swaps - use temp memory address
 CIPHER FILE -
 key in RAM[1], text in RAM[2], encryptedtext in RAM[0]
 break RAM[2] into left and right
+
+FIXED LOCATIONS = 0,1,2,3,4,5,6,7,10
+
 RAM[3] <- key copy
-RAM[4] <- right_mask
-RAM[5] <- left_mask
+RAM[4] <- number of loops 
+RAM[5] <- loop counter
 
 REPEAT
+USES = 6,7,8,9
 RAM[6] <- right
 RAM[7] <- left
-RAM[8] <- RAM[6] XOR not RAM[3]
+RAM[8] <- RAM[16] <- RAM[6] XOR not RAM[3]
 RAM[7] <- RAM[7] XOR RAM[8]
 
 RAM[3] <- Rotate key
 RAM[9] <- RAM[7]
 RAM[7] <- RAM[6]
 RAM[6] <- RAM[9]
+RAM[10] <- JUMP COUNTER
 
-REPEAT 4 TIMES
+FREED = 11,12,13,14,15 
+
+
+XOR FUNC -
+RAM[11] XOR RAM[10]
+
+RAM[11] <- not RAM[3]
+RAM[12] <- RAM[6]
+
+ram[13] <- not ram[11]
+ram[14] <- not ram[12]
+ram[14] <- ram[11] and ram[14]
+ram[13] <- ram[12] and ram[13]
+ram[15] <- ram[14] or ram[13]
+
+FREE = 11,12,13,14,15,
+
+
+
+ROTATE FUNC -
 
 
 
@@ -53,39 +79,4 @@ ram[5] <- ram[8] or ram[9]
 
 
 
-    @R3
-    D=M
-    @R6
-    M=!D
-
-    @R4
-    D=M
-    @R7
-    M=!D
-
-    @R3
-    D=M
-    @R7
-    D=M&D
-    @R8
-    M=D
-
-    @R4
-    D=M
-    @R6
-    D=M&D
-    @R9
-    M=D
-
-    @R8
-    D=M
-    @R9
-    D=M|D
-    @R5
-    M=D
-(END)
-    @END
-    0;JMP
-
-
-
+ 
