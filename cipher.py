@@ -14,8 +14,6 @@ def rotate(a):
 inpt = [random.randint(0,1) for x in range(0,16)]
 key = [random.randint(0,1) for x in range(0,8)]
 
-key = [1,1,0,0,1,0,0,1]
-inpt = [1,0,0,0,1,1,0,1,1,1,1,1,0,0,1,0]
 print(f"input: {inpt}\nkey:   {key}\n")
 
 for j in range(0,4):

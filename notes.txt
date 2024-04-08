@@ -4,7 +4,7 @@ F(R,K) = R XOR NOT K
 Iteration1 result = L XOR F(R,K)
 left shift rotation for K
 
-0000000011001000
+0000000011001001
 1000110111110010
 
 AND mask to separate left and right
@@ -77,6 +77,3 @@ ram[8] <- ram[3] and ram[7]
 ram[9] <- ram[6] and ram[4]
 ram[5] <- ram[8] or ram[9]
 
-
-
- 

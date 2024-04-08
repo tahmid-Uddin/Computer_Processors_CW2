@@ -4,7 +4,7 @@
     @R3
     M=D
 
-// Seperated Right side = RAM[6]
+// Separate right side using mask = RAM[6]
     @255
     D=A 
     @R2
@@ -12,7 +12,7 @@
     @R6
     M=D
 
-// Seperated Left side = RAM[7]
+// Separate Left side using mask = RAM[7]
     @32640
     D=A
     D=D+A
@@ -21,13 +21,41 @@
     @R7
     M=D
 
-// Loops RAM[4] times
-    @R5
+// Rotates RAM[7] (left) so that its on the right side
+    @R7 
+    D=M 
+    @R12 //input
+    M=D
+
+    @32767
+    D=A
+    @R13 //mask for 16 bit rotation
+    D=!D 
+    M=D
+
+    @8
+    D=A 
+    @R15 //number of rotations
+    M=D
+
+    @R10 //counter to know where to exit
+    M=0
+
+    @ROTATE 
+    0;JMP
+(C3)
+    @R12 //rotate output
+    D=M 
+    @R7 
+    M=D 
+
+// Loops RAM[4] (4) times
+    @R5 //loop counter
     M=1
     @4
     D=A 
     @R4 
-    M=D 
+    M=D
 
 (LOOP)
 // Breaks out of loop when RAM[5] > RAM[4]
@@ -35,11 +63,9 @@
     D=M
     @R4
     D=D-M
-    @END
+    @LOOPEND
     D;JGT
 
-// RAM[10] - counter to know where to return after jump
-//           0 for C1, 1 for C2.
 // F(right, key) = RAM[8]
     // RAM[11] = NOT key (RAM[3])
     @R3
@@ -47,13 +73,13 @@
     @R11
     M=!D
 
-    // RAM[12] = right (RAM[6])
+    // RAM[12] = Right (RAM[6])
     @R6
     D=M 
     @R12
     M=D
 
-    // RAM[10] = 0
+    // RAM[10] = 0 (counter for selecting exit point)
     @R10
     M=0
 
@@ -61,7 +87,7 @@
     @XOR
     0;JMP
 (C1)
-    // Seperated Right side = RAM[15]
+    // Separates right side of XOR output
     @255
     D=A 
     @R15
@@ -74,40 +100,15 @@
     @R8
     M=D
 
-// Iteration Results = left side = RAM[7]
-    // RAM[8] left shift 8 times
-    @R8
-    D=M
-    D=D+M
-    M=D
-    D=M
-    D=D+M
-    M=D
-    D=M
-    D=D+M
-    M=D
-    D=M
-    D=D+M
-    M=D
-    D=M
-    D=D+M
-    M=D
-    D=M
-    D=D+M
-    M=D
-    D=M
-    D=D+M
-    M=D
-    D=M
-    D=D+M
-    M=D
-
+// Iteration Result = left side = RAM[7]
     // RAM[15] = RAM[7] XOR RAM[8]
+    // RAM[11] = RAM[7]
     @R7
     D=M
     @R11
     M=D 
 
+    // RAM[12] = RAM[8]
     @R8
     D=M 
     @R12 
@@ -116,11 +117,16 @@
     @XOR
     0;JMP
 (C2)
-
     // RAM[7] = RAM[15]
     @R15
     D=M
     @R7
+    M=D
+    // Seperated Right side = RAM[7]
+    @255
+    D=A 
+    @R7
+    D=D&M
     M=D
 
 // Swap left and right
@@ -130,117 +136,81 @@
     @R9
     M=D
 
+    // RAM[7] = RAM[6]
     @R6
     D=M 
     @R7 
     M=D 
 
+    // RAM[6] = RAM[9] (= RAM[7])
     @R9
     D=M
     @R6 
     M=D
 
-// Rotate key
+// Rotates key
     @R3 
     D=M 
-    @R12 
+    @R12 // input for rotate func
     M=D
 
     @128 
     D=A 
-    @R13 
+    @R13 // mask for 8 bit rotation
     M=D 
 
-    @R15
+    @R10 // counter for exit point
+    M=1
+
+    @R15 // number of rotations
     M=1
 
     @ROTATE 
     0;JMP
-(C3)
-    // Seperated Right side = RAM[6]
-    @255
-    D=A 
-    @R12
-    D=D&M
-    M=D
-
+(C4)
+    // Updates key copy - RAM[3]
     @R12
     D=M 
     @R3 
     M=D 
-
-// Rotate RAM[6], so that its on the right
-    @R6 
-    D=M 
-    @R12 
-    M=D
-
-    @32767
-    D=A
-    @R13 
-    D=!D 
-    M=D
-
-    @8
-    D=A 
-    @R15
-    M=D
-
-    @R10
-    M=0
-
-    @ROTATE 
-    0;JMP
-(C4)
-    @R12
-    D=M 
-    @R6 
-    M=D 
-
-// Shift RAM[7] so its on the left
-    @R7
-    D=M
-    D=D+M
-    M=D
-    D=M
-    D=D+M
-    M=D
-    D=M
-    D=D+M
-    M=D
-    D=M
-    D=D+M
-    M=D
-    D=M
-    D=D+M
-    M=D
-    D=M
-    D=D+M
-    M=D
-    D=M
-    D=D+M
-    M=D
-    D=M
-    D=D+M
-    M=D
-    
-
-// Merges left and right
-    @R6
-    D=M
-    @R7 
-    D=D|M 
-    @R0 
-    M=D
 
     // Increments i
     @R5
     M=M+1
     @LOOP
     0;JMP
+(LOOPEND)
+
+// MERGE LEFT AND RIGHT
+    // Shifts the left 8 bits to the left 8 times
+    // Repeated adding faster than rotation func and using loop
+    @R7
+    D=M
+    D=D+M
+    M=D
+    D=D+M
+    M=D
+    D=D+M
+    M=D
+    D=D+M
+    M=D
+    D=D+M
+    M=D
+    D=D+M
+    M=D
+    D=D+M
+    M=D
+    D=D+M
+    M=D
+
+    // RAM[0] = RAM[7] OR RAM[6]
+    @R6
+    D=D|M
+    @R0 
+    M=D
 
 (END)
-    
+    // Program end
     @END
     0;JMP
 
@@ -356,13 +326,11 @@
     @R10
     D=M
     @FIRSTROTATE
-    D;JEQ
+    D;JNE
     @C3
     0;JMP
 
 (FIRSTROTATE)
-    @R10
-    M=1
     @C4
     0;JMP
 (ROTATEEND)
